@@ -1,100 +1,554 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Công cụ tính toán</title>
+  <meta charset="UTF-8" />
+  <title>Tra cứu tỉnh/thành Việt Nam 🎉</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f9;
-      display: flex;
-      justify-content: center;
+    :root{
+      --bg: #fffaf0;
+      --primary: #ff6b6b;
+      --secondary: #4ecdc4;
+      --accent: #ffe66d;
+      --text: #2d3436;
+      --muted: #6c757d;
+      --card: #ffffff;
+    }
+    *{ box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+      background: radial-gradient(circle at 10% 10%, #fff1d0 0%, #fffaf0 50%, #fefefe 100%);
+      color: var(--text);
+    }
+    header{
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color:#fff;
+      padding: 28px 18px;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+    header h1{
+      margin:0 0 6px;
+      font-size: 28px;
+      letter-spacing: 0.2px;
+    }
+    header p{
+      margin:0;
+      opacity:0.9;
+    }
+    .mascot{
+      position:absolute;
+      right:16px;
+      bottom:-12px;
+      font-size: 56px;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15));
+      transform: rotate(-8deg);
+    }
+
+    .container{
+      max-width: 980px;
+      margin: 24px auto;
+      padding: 0 16px;
+    }
+
+    .search-card{
+      background: var(--card);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
       align-items: center;
-      height: 100vh;
     }
-    .calculator {
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-      width: 300px;
+    .search-left{
+      display:flex;
+      gap:10px;
+      flex-wrap: wrap;
+      align-items: center;
     }
-    .calculator h2 {
-      text-align: center;
-      margin-bottom: 20px;
+    .input-wrap{
+      position:relative;
+      flex:1;
+      min-width: 240px;
     }
-    input[type="number"] {
-      width: 100%;
-      padding: 10px;
-      margin: 5px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    select, button {
-      width: 100%;
-      padding: 10px;
-      margin: 5px 0;
-      border: none;
-      border-radius: 5px;
-      background: #007BFF;
-      color: #fff;
+    .input-wrap input{
+      width:100%;
+      padding: 12px 14px 12px 40px;
+      border: 2px solid #ffd6d6;
+      border-radius: 12px;
       font-size: 16px;
+      outline:none;
+      transition: all 0.2s ease;
+      background: #fff;
+    }
+    .input-wrap input:focus{
+      border-color: var(--primary);
+      box-shadow: 0 0 0 6px rgba(255,107,107,0.12);
+    }
+    .input-wrap .icon{
+      position:absolute;
+      left:10px;
+      top:50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size:18px;
+    }
+    .btn{
+      border:none;
+      background: var(--secondary);
+      color:#073b4c;
+      font-weight: 700;
+      padding: 12px 16px;
+      border-radius: 12px;
+      cursor:pointer;
+      transition: transform 0.04s ease, filter 0.2s ease, background 0.2s ease;
+    }
+    .btn:hover{ filter: brightness(1.05); }
+    .btn:active{ transform: scale(0.98); }
+    .btn.secondary{ background: var(--accent); color:#3a3a3a; }
+    .btn.ghost{
+      background: transparent;
+      color: var(--primary);
+      border: 2px dashed #ffd6d6;
+    }
+
+    .suggest{
+      display:flex; gap:8px; flex-wrap: wrap; margin-top: 10px;
+    }
+    .chip{
+      background:#fff;
+      border: 2px dashed #ffe1a4;
+      color:#b86800;
+      padding: 8px 12px;
+      border-radius: 999px;
+      cursor:pointer;
+      font-weight:600;
+      transition: all 0.2s ease;
+    }
+    .chip:hover{ background:#fff9e8; }
+
+    .panel{
+      margin-top: 18px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 800px){
+      .panel{ grid-template-columns: 1fr; }
+      .search-card{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      background: var(--card);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      padding: 16px;
+    }
+    .title-line{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .title-line h2{
+      margin:0; font-size: 20px;
+    }
+    .badge{
+      background:#fff3bf;
+      color:#8a6d00;
+      font-weight:700;
+      padding: 6px 10px;
+      border-radius: 10px;
+      border: 2px solid #ffe08a;
+    }
+
+    .tabs{
+      display:flex; gap:8px; flex-wrap: wrap; margin-top: 8px;
+    }
+    .tab{
+      background: #f7f7f7;
+      border: 2px solid #eee;
+      color:#333;
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:700;
+      transition: all 0.2s ease;
+    }
+    .tab.active{
+      background: #e7fff9;
+      border-color: var(--secondary);
+      color:#015a53;
+    }
+
+    .content{
+      margin-top: 12px;
+      background: #fafafa;
+      border: 2px dashed #e8e8e8;
+      padding: 14px;
+      border-radius: 12px;
+      min-height: 120px;
+    }
+    .content p{ margin: 0 0 8px; }
+
+    .links{
+      margin-top: 12px;
+      display:flex; gap:8px; flex-wrap: wrap;
+    }
+    .link{
+      text-decoration:none;
+      background:#f0f9ff;
+      border: 2px solid #cfe8ff;
+      color:#0b4f8a;
+      font-weight:700;
+      padding: 10px 12px;
+      border-radius: 12px;
+      transition: all 0.2s ease;
+    }
+    .link:hover{ background:#e7f3ff; }
+
+    .footer{
+      text-align:center;
+      margin: 24px 0 32px;
+      color: var(--muted);
+    }
+
+    /* Autocomplete dropdown */
+    .dropdown{
+      position: absolute;
+      z-index: 10;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 2px solid #ffd6d6;
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      max-height: 220px;
+      overflow: auto;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+    }
+    .item{
+      padding: 10px 12px;
       cursor: pointer;
+      border-bottom: 1px dashed #ffe8e8;
     }
-    button:hover {
-      background: #0056b3;
+    .item:last-child{ border-bottom: none; }
+    .item:hover{ background: #fff7f7; }
+    .empty{
+      padding: 10px 12px;
+      color: var(--muted);
+      font-style: italic;
     }
-    .result {
-      margin-top: 15px;
-      font-weight: bold;
-      text-align: center;
-      font-size: 18px;
+    .stats{
+      display:flex; gap:8px; flex-wrap: wrap; margin-top: 8px;
+    }
+    .stat{
+      background:#fff; border:2px solid #eee; border-radius: 12px; padding:8px 10px; font-weight:700;
     }
   </style>
 </head>
 <body>
-  <div class="calculator">
-    <h2>Công cụ tính toán</h2>
-    <input type="number" id="num1" placeholder="Nhập số thứ nhất">
-    <input type="number" id="num2" placeholder="Nhập số thứ hai">
-    <select id="operation">
-      <option value="add">Cộng (+)</option>
-      <option value="subtract">Trừ (-)</option>
-      <option value="multiply">Nhân (×)</option>
-      <option value="divide">Chia (÷)</option>
-    </select>
-    <button onclick="calculate()">Tính toán</button>
-    <div class="result" id="result">Kết quả sẽ hiển thị ở đây</div>
+  <header>
+    <h1>Tra cứu tỉnh/thành Việt Nam</h1>
+    <p>Vui nhộn – thân thiện – đầy đủ: vị trí địa lí, đặc điểm, lịch sử và fun facts 🧭📚🎈</p>
+    <div class="mascot">🦜</div>
+  </header>
+
+  <div class="container">
+    <!-- Search -->
+    <div class="search-card" role="search">
+      <div class="search-left">
+        <div class="input-wrap">
+          <span class="icon">🔎</span>
+          <input id="searchInput" type="text" placeholder="Nhập tỉnh/thành (ví dụ: Hà Nội, Cần Thơ, Hải Phòng...)" autocomplete="off" />
+          <div id="dropdown" class="dropdown" hidden></div>
+        </div>
+        <button class="btn" id="btnSearch">Tìm kiếm</button>
+        <button class="btn secondary" id="btnRandom">Gợi ý ngẫu nhiên 🎲</button>
+        <button class="btn ghost" id="btnClear">Xóa</button>
+      </div>
+      <div class="suggest" aria-label="Gợi ý nhanh">
+        <div class="chip" data-q="Hà Nội">Hà Nội</div>
+        <div class="chip" data-q="TP Hồ Chí Minh">TP.HCM</div>
+        <div class="chip" data-q="Đà Nẵng">Đà Nẵng</div>
+        <div class="chip" data-q="Cần Thơ">Cần Thơ</div>
+        <div class="chip" data-q="Huế">Huế</div>
+      </div>
+    </div>
+
+    <!-- Result -->
+    <div class="panel">
+      <div class="card" id="infoCard">
+        <div class="title-line">
+          <h2 id="provinceTitle">Hãy chọn một tỉnh/thành 🎯</h2>
+          <span class="badge" id="regionBadge">—</span>
+        </div>
+        <div class="stats" id="statsBar"></div>
+        <div class="tabs" id="tabs">
+          <div class="tab active" data-tab="geo">Vị trí địa lí</div>
+          <div class="tab" data-tab="features">Đặc điểm</div>
+          <div class="tab" data-tab="history">Lịch sử</div>
+          <div class="tab" data-tab="fun">Fun facts 🎉</div>
+        </div>
+        <div class="content" id="tabContent">
+          <p>Nhập tên tỉnh/thành để xem chi tiết thú vị về địa lí, đặc điểm, lịch sử và những điều bên lề.</p>
+        </div>
+        <div class="links" id="linksRow" hidden></div>
+      </div>
+
+      <div class="card">
+        <h2 style="margin:0 0 8px;">Mục tiêu dữ liệu</h2>
+        <p style="margin:0 0 8px;">Bộ dữ liệu mục tiêu: 63/63 tỉnh/thành. Bạn có thể mở rộng nhanh bằng cách thêm JSON ngoài.</p>
+        <div class="links">
+          <a class="link" href="#" id="exportBtn">Tải dữ liệu hiện có (JSON)</a>
+          <label class="link" style="cursor:pointer;">
+            <input id="importFile" type="file" accept="application/json" hidden />
+            Nhập dữ liệu từ JSON
+          </label>
+          <a class="link" href="https://www.google.com/maps?q=Việt+Nam" target="_blank" rel="noopener">Mở Google Maps 🗺️</a>
+        </div>
+        <p style="margin:8px 0 0; font-size: 14px; color: var(--muted);">
+          Mẹo: Gõ vài ký tự để thấy gợi ý tự động. Nhấn Enter để chọn nhanh.
+        </p>
+      </div>
+    </div>
+
+    <div class="footer">Made with 💛 • Phiên bản demo dữ liệu (có thể nhập thêm để đủ 63/63)</div>
   </div>
 
   <script>
-    function calculate() {
-      const num1 = parseFloat(document.getElementById('num1').value);
-      const num2 = parseFloat(document.getElementById('num2').value);
-      const operation = document.getElementById('operation').value;
-      let result;
+    // Danh sách tên 63 tỉnh/thành (để autocomplete + kiểm tra hợp lệ)
+    const PROVINCE_NAMES = [
+      "An Giang","Bà Rịa - Vũng Tàu","Bắc Giang","Bắc Kạn","Bạc Liêu","Bắc Ninh","Bến Tre","Bình Định","Bình Dương",
+      "Bình Phước","Bình Thuận","Cà Mau","Cần Thơ","Cao Bằng","Đà Nẵng","Đắk Lắk","Đắk Nông","Điện Biên","Đồng Nai",
+      "Đồng Tháp","Gia Lai","Hà Giang","Hà Nam","Hà Nội","Hà Tĩnh","Hải Dương","Hải Phòng","Hậu Giang","Hòa Bình",
+      "Hưng Yên","Khánh Hòa","Kiên Giang","Kon Tum","Lai Châu","Lâm Đồng","Lạng Sơn","Lào Cai","Long An","Nam Định",
+      "Nghệ An","Ninh Bình","Ninh Thuận","Phú Thọ","Phú Yên","Quảng Bình","Quảng Nam","Quảng Ngãi","Quảng Ninh",
+      "Quảng Trị","Sóc Trăng","Sơn La","Tây Ninh","Thái Bình","Thái Nguyên","Thanh Hóa","Thừa Thiên Huế","Tiền Giang",
+      "TP Hồ Chí Minh","Trà Vinh","Tuyên Quang","Vĩnh Long","Vĩnh Phúc","Yên Bái"
+    ];
 
-      if (isNaN(num1) || isNaN(num2)) {
-        result = "Vui lòng nhập đủ hai số!";
-      } else {
-        switch (operation) {
-          case "add":
-            result = num1 + num2;
-            break;
-          case "subtract":
-            result = num1 - num2;
-            break;
-          case "multiply":
-            result = num1 * num2;
-            break;
-          case "divide":
-            result = num2 !== 0 ? (num1 / num2) : "Không thể chia cho 0!";
-            break;
-        }
+    // Dữ liệu mẫu (có thể mở rộng nhập từ JSON). Mỗi mục gồm geo, features, history, fun, region, stats.
+    const DATA = {
+      "Hà Nội": {
+        region: "Đồng bằng sông Hồng (Miền Bắc)",
+        geo: "Thủ đô nằm ở trung tâm Đồng bằng sông Hồng; tiếp giáp Vĩnh Phúc, Phú Thọ, Hòa Bình, Hà Nam, Bắc Ninh, Hưng Yên.",
+        features: "Kinh tế – văn hoá – giáo dục trọng điểm; hệ thống hồ và sông dày đặc; 4 mùa rõ rệt.",
+        history: "Trung tâm lịch sử với Thăng Long ngàn năm; nhiều di tích như Hoàng thành Thăng Long, Văn Miếu – Quốc Tử Giám.",
+        fun: "Phở, bún chả, hồ Hoàn Kiếm với truyền thuyết Rùa; mùa cốm xanh; phố cổ 36 phố phường.",
+        stats: { "Dân số ước": "8M+", "Diện tích": "3.3k km²" }
+      },
+      "TP Hồ Chí Minh": {
+        region: "Đông Nam Bộ (Miền Nam)",
+        geo: "Nằm bên sông Sài Gòn; giáp Đồng Nai, Bình Dương, Tây Ninh, Long An, Tiền Giang và biển Đông.",
+        features: "Đầu tàu kinh tế; khí hậu nhiệt đới gió mùa, hai mùa mưa – khô; đô thị năng động.",
+        history: "Phát triển mạnh từ thời Gia Định; sáp nhập và đổi tên thành TP.HCM năm 1976.",
+        fun: "Cà phê sớm, street food đa dạng, chợ Bến Thành, phố đi bộ Nguyễn Huệ.",
+        stats: { "Dân số ước": "10M+", "Diện tích": "2.1k km²" }
+      },
+      "Đà Nẵng": {
+        region: "Duyên hải Nam Trung Bộ",
+        geo: "Thành phố ven biển; gần đèo Hải Vân; giáp Thừa Thiên Huế và Quảng Nam.",
+        features: "Biển Mỹ Khê, bán đảo Sơn Trà; đô thị du lịch – dịch vụ phát triển.",
+        history: "Cảng Đà Nẵng quan trọng từ thế kỷ 19; mở rộng mạnh sau 1997 khi tách khỏi Quảng Nam – Đà Nẵng.",
+        fun: "Cầu Rồng phun lửa, mì Quảng, view đèo Hải Vân ‘đã mắt’.",
+        stats: { "Dân số ước": "1.2M", "Diện tích": "1.3k km²" }
+      },
+      "Cần Thơ": {
+        region: "Đồng bằng sông Cửu Long",
+        geo: "Bên sông Hậu; giáp Hậu Giang, Vĩnh Long, Đồng Tháp, An Giang, Kiên Giang.",
+        features: "Trung tâm Mê Kông; chợ nổi Cái Răng; phù sa – cây trái trù phú.",
+        history: "Hình thành từ thời Nam Bộ mở đất; phát triển mạnh thế kỷ 20–21.",
+        fun: "Hủ tiếu, chè bưởi; đi ghe sáng sớm ngắm bình minh sông nước.",
+        stats: { "Dân số ước": "1.2M", "Diện tích": "1.4k km²" }
+      },
+      "Huế": {
+        region: "Bắc Trung Bộ",
+        geo: "Bên sông Hương, gần biển Thuận An; giáp Quảng Trị, Quảng Nam, Đà Nẵng.",
+        features: "Di sản cố đô; khí hậu mưa nhiều, cảnh sắc thơ.",
+        history: "Kinh đô triều Nguyễn (1802–1945); quần thể di tích Cố đô Huế UNESCO.",
+        fun: "Cơm hến, bún bò, nhã nhạc cung đình; mưa Huế ‘đặc sản’.",
+        stats: { "Dân số ước": "0.9M", "Diện tích": "5k km²" }
       }
-      document.getElementById('result').innerText = "Kết quả: " + result;
+      // Bạn có thể nhập thêm hoặc thay thế bằng JSON để đủ 63 tỉnh/thành
+    };
+
+    // State
+    let currentProvince = null;
+    let activeTab = "geo";
+
+    // Elements
+    const searchInput = document.getElementById("searchInput");
+    const dropdown = document.getElementById("dropdown");
+    const btnSearch = document.getElementById("btnSearch");
+    const btnRandom = document.getElementById("btnRandom");
+    const btnClear = document.getElementById("btnClear");
+    const provinceTitle = document.getElementById("provinceTitle");
+    const regionBadge = document.getElementById("regionBadge");
+    const tabs = document.getElementById("tabs");
+    const tabContent = document.getElementById("tabContent");
+    const statsBar = document.getElementById("statsBar");
+    const linksRow = document.getElementById("linksRow");
+    const exportBtn = document.getElementById("exportBtn");
+    const importFile = document.getElementById("importFile");
+
+    // Helpers
+    function normalize(s){
+      return (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim();
     }
+    function filterNames(query){
+      const q = normalize(query);
+      return PROVINCE_NAMES
+        .map(name => ({ name, score: name.toLowerCase().includes(q) ? 1 : (normalize(name).includes(q) ? 0.8 : 0) }))
+        .filter(x => x.score > 0)
+        .sort((a,b) => b.score - a.score)
+        .map(x => x.name);
+    }
+    function buildLinks(name){
+      const wiki = `https://vi.wikipedia.org/wiki/${encodeURIComponent(name)}`;
+      const maps = `https://www.google.com/maps/search/${encodeURIComponent(name + " Việt Nam")}`;
+      const google = `https://www.google.com/search?q=${encodeURIComponent(name + " cổng thông tin tỉnh")}`;
+      linksRow.innerHTML = `
+        <a class="link" href="${wiki}" target="_blank" rel="noopener">Wikipedia</a>
+        <a class="link" href="${maps}" target="_blank" rel="noopener">Xem trên Google Maps</a>
+        <a class="link" href="${google}" target="_blank" rel="noopener">Cổng thông tin tỉnh</a>
+      `;
+      linksRow.hidden = false;
+    }
+    function renderStats(stats){
+      statsBar.innerHTML = "";
+      if(!stats) return;
+      Object.entries(stats).forEach(([k,v])=>{
+        const el = document.createElement("div");
+        el.className = "stat";
+        el.textContent = `${k}: ${v}`;
+        statsBar.appendChild(el);
+      });
+    }
+    function setActiveTab(tab){
+      activeTab = tab;
+      [...tabs.querySelectorAll(".tab")].forEach(t => t.classList.toggle("active", t.dataset.tab === tab));
+      renderContent();
+    }
+    function renderContent(){
+      if(!currentProvince){
+        tabContent.innerHTML = "<p>Chọn một tỉnh/thành để bắt đầu khám phá nhé!</p>";
+        linksRow.hidden = true;
+        regionBadge.textContent = "—";
+        statsBar.innerHTML = "";
+        return;
+      }
+      const data = DATA[currentProvince] || {};
+      const text = data[activeTab] || "⏳ Chưa có dữ liệu chi tiết. Hãy dùng các liên kết bên dưới để tra cứu nhanh và/hoặc nhập JSON mở rộng.";
+      tabContent.innerHTML = `<p>${text}</p>`;
+      provinceTitle.textContent = currentProvince;
+      regionBadge.textContent = data.region || "Đang cập nhật khu vực";
+      renderStats(data.stats);
+      buildLinks(currentProvince);
+    }
+
+    function chooseProvince(name){
+      currentProvince = name;
+      dropdown.hidden = true;
+      searchInput.value = name;
+      renderContent();
+    }
+
+    // Autocomplete dropdown
+    function updateDropdown(){
+      const q = searchInput.value;
+      const results = filterNames(q).slice(0, 10);
+      if(results.length === 0){
+        dropdown.innerHTML = `<div class="empty">Không tìm thấy. Thử gõ tên khác hoặc chọn gợi ý.</div>`;
+        dropdown.hidden = false;
+        return;
+      }
+      dropdown.innerHTML = results.map(n => `<div class="item" data-name="${n}">${n}</div>`).join("");
+      dropdown.hidden = false;
+    }
+
+    // Events
+    searchInput.addEventListener("input", updateDropdown);
+    searchInput.addEventListener("focus", updateDropdown);
+    document.addEventListener("click", (e)=>{
+      if(e.target.classList.contains("item")){
+        chooseProvince(e.target.dataset.name);
+      } else if(!dropdown.contains(e.target) && e.target !== searchInput){
+        dropdown.hidden = true;
+      }
+    });
+    searchInput.addEventListener("keydown", (e)=>{
+      if(e.key === "Enter"){
+        const val = searchInput.value.trim();
+        const matched = filterNames(val)[0];
+        if(matched) chooseProvince(matched);
+      }
+    });
+    btnSearch.addEventListener("click", ()=>{
+      const val = searchInput.value.trim();
+      const matched = filterNames(val)[0];
+      if(matched) chooseProvince(matched);
+      else updateDropdown();
+    });
+    btnRandom.addEventListener("click", ()=>{
+      const name = PROVINCE_NAMES[Math.floor(Math.random() * PROVINCE_NAMES.length)];
+      chooseProvince(name);
+    });
+    btnClear.addEventListener("click", ()=>{
+      searchInput.value = "";
+      currentProvince = null;
+      dropdown.hidden = true;
+      renderContent();
+    });
+
+    tabs.addEventListener("click", (e)=>{
+      const t = e.target.closest(".tab");
+      if(!t) return;
+      setActiveTab(t.dataset.tab);
+    });
+
+    // Quick chips
+    document.querySelectorAll(".chip").forEach(ch => {
+      ch.addEventListener("click", () => {
+        chooseProvince(ch.dataset.q);
+      });
+    });
+
+    // Export current DATA to JSON
+    exportBtn.addEventListener("click", (e)=>{
+      e.preventDefault();
+      const blob = new Blob([JSON.stringify(DATA, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "vn-provinces-data-demo.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // Import JSON to extend DATA
+    importFile.addEventListener("change", async ()=>{
+      const file = importFile.files[0];
+      if(!file) return;
+      try{
+        const text = await file.text();
+        const json = JSON.parse(text);
+        Object.assign(DATA, json);
+        alert("Đã nhập dữ liệu JSON. Hãy tìm lại tỉnh/thành để xem nội dung mới!");
+        renderContent();
+      }catch(err){
+        alert("Không thể đọc JSON. Vui lòng kiểm tra định dạng.");
+      } finally {
+        importFile.value = "";
+      }
+    });
+
+    // Init
+    renderContent();
   </script>
 </body>
 </html>
-
